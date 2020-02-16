@@ -58,12 +58,7 @@ export function Folders(props) {
 								</Button>
 							</td>
 							<td className="align-middle">
-								<Button
-									size="sm"
-									className="shadow-none"
-									style={colorScheme.trashBtns}
-									onClick={() => _deleteFolder(folder)}
-								><IoMdTrash/></Button>
+								<DeleteFolderModal folder={folder} deleteFolder={_deleteFolder} colorScheme={colorScheme}/>
 							</td>
 						</tr>
 					)
@@ -146,6 +141,50 @@ export function AddFolderModal(props) {
 						</InputGroup.Append>
 					</InputGroup>
 				</Modal.Body>
+			</Modal>
+		</div>
+	)
+}
+
+
+export function DeleteFolderModal(props) {
+	let folder = props.folder
+	let deleteFolder = props.deleteFolder
+	let colorScheme = props.colorScheme
+
+	const [show, setShow] = useState(false)
+	const textInput = React.createRef()
+
+	const _handleClose = () => setShow(false)
+
+	const _handleShow = () => setShow(true)
+
+	return (
+		<div>
+			<Button
+				className="shadow-none"
+				style={colorScheme.navbarBtns}
+				size="sm"
+				onClick={_handleShow}
+			><IoMdTrash/></Button>
+
+			<Modal size="sm" show={show} onHide={_handleClose} animation={false} closeButton>
+				<Modal.Header closeButton>
+					<Modal.Title>Are you sure?</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<div>
+						<span>Delete folder: <b>{folder.name}</b></span>
+					</div>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button
+						style={colorScheme.navbarBtns}
+						size="sm"
+						className="shadow-none"
+						onClick={() => deleteFolder(folder)}
+					>Yes, delete it!</Button>
+				</Modal.Footer>
 			</Modal>
 		</div>
 	)
