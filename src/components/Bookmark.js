@@ -1,8 +1,18 @@
 /*global chrome*/
-import React from 'react'
+import React, { useState } from 'react'
 
-import { Button, Form, Table } from 'react-bootstrap'
-import { IoMdBookmark, IoMdTrash } from 'react-icons/io'
+import {
+	Button,
+	Col,
+	Container,
+	Dropdown,
+	DropdownButton,
+	Form,
+	Modal,
+	Row,
+	Table
+} from 'react-bootstrap'
+import { IoMdBookmark, IoMdTrash, IoMdMove } from 'react-icons/io'
 
 
 const uuidv4 = require('uuid/v4')
@@ -64,8 +74,10 @@ export function AddBookmarkBtn(props) {
 
 
 export function Bookmarks(props) {
+	let folders = props.folders
 	let bookmarks = props.bookmarks
 	let setBookmarks = props.setBookmarks
+	let moveBookmark = props.moveBookmark
 	let currentFolderId = props.currentFolderId
 	let colorScheme = props.colorScheme
 
@@ -105,6 +117,14 @@ export function Bookmarks(props) {
 								</a>
 							</td>
 							<td className="align-middle" style={colorScheme.bookmarksTableTds}>
+								<MoveBookmarkModal
+									folders={folders}
+									bookmark={bookmark}
+									moveBookmark={moveBookmark}
+									colorScheme={colorScheme}
+								/>
+							</td>
+							<td className="align-middle" style={colorScheme.bookmarksTableTds}>
 								<Button
 									size="sm"
 									className="shadow-none"
@@ -118,5 +138,82 @@ export function Bookmarks(props) {
 				)}
 			</tbody>
 		</Table>
+	)
+}
+
+export function MoveBookmarkModal(props) {
+	let folders = props.folders
+	let bookmark = props.bookmark
+	let moveBookmark = props.moveBookmark
+	let colorScheme = props.colorScheme
+
+	const [show, setShow] = useState(false)
+	const [destFolder, setDestFolder] = useState(null)
+	const textInput = React.createRef()
+
+	const _handleClose = () => setShow(false)
+
+	const _handleShow = () => setShow(true)
+
+	const _setDestFolder = (eventKey) => {
+		let folder = folders.filter(fl => {
+			return fl.folderId === eventKey
+		})[0]
+
+		setDestFolder(folder)
+	}
+
+	const _moveBookmark = (folder) => {
+		moveBookmark(bookmark, folder)
+		_handleClose()
+	}
+
+	return (
+		<div>
+			<Button
+				size="sm"
+				className="shadow-none"
+				style={colorScheme.trashBtns}
+				onClick={_handleShow}
+			><IoMdMove/>
+			</Button>
+
+			<Modal size="sm" show={show} onHide={_handleClose} animation={false}>
+				<Modal.Body>
+					<Container>
+						<Row>
+							<Col xs={4}>
+								<span>Move to:</span>
+							</Col>
+							<Col xs={8}>
+								<DropdownButton
+									size="sm"
+									id="dropdown-basic-button"
+									title={destFolder !== null ? destFolder.name : "Root folder"}
+									onSelect={(eventKey) => _setDestFolder(eventKey)}
+								>
+									{folders.map(
+										(folder, key) => (
+											<Dropdown.Item
+												key={key}
+												eventKey={folder.folderId}>{folder.name}
+											</Dropdown.Item>
+										)
+									)}
+								</DropdownButton>
+							</Col>
+						</Row>
+					</Container>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button
+						style={colorScheme.navbarBtns}
+						size="sm"
+						className="shadow-none"
+						onClick={() => _moveBookmark(destFolder)}
+					>Move!</Button>
+				</Modal.Footer>
+			</Modal>
+		</div>
 	)
 }

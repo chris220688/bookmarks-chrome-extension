@@ -79,6 +79,23 @@ class App extends Component {
 		}))
 	}
 
+	moveBookmark = (bookmark, folder) => {
+		if (folder !== null) {
+			bookmark.parentFolderId = folder.folderId
+		} else {
+			bookmark.parentFolderId = null
+		}
+
+		let bookmarks = this.state.bookmarks.filter(
+			bk => bk.bookmarkId !== bookmark.bookmarkId
+		)
+		bookmarks.push(bookmark)
+
+		this.setState(state => ({
+			bookmarks: bookmarks
+		}))
+	}
+
 	goBack = () => {
 		if (this.state.settings === true) {
 			this.setState(state => ({
@@ -133,9 +150,12 @@ class App extends Component {
 		
 		const handleFileRead = (e) => {
 			let imported_bookmarks = JSON.parse(fileReader.result)
+			let bookmarks = this.state.bookmarks.concat(imported_bookmarks.bookmarks)
+			let folders = this.state.folders.concat(imported_bookmarks.folders)
+
 			this.setState(state => ({
-				folders: imported_bookmarks.folders,
-				bookmarks: imported_bookmarks.bookmarks
+				folders: folders,
+				bookmarks: bookmarks
 			}))
 		}
 		
@@ -147,8 +167,8 @@ class App extends Component {
 		let data = new Blob([
 			JSON.stringify({
 					folders: this.state.folders,
-					bookmarks:this.state.bookmarks
-				})
+					bookmarks: this.state.bookmarks
+				}, 0, 4)
 			], {type: 'text/json'}
 		)
 		let jsonURL = window.URL.createObjectURL(data)
@@ -235,8 +255,10 @@ class App extends Component {
 							colorScheme={this.state.colorScheme}
 						/>
 						<Bookmarks
+							folders={this.state.folders}
 							bookmarks={this.state.bookmarks}
 							setBookmarks={this.setBookmarks}
+							moveBookmark={this.moveBookmark}
 							currentFolderId={this.state.currentFolderId}
 							colorScheme={this.state.colorScheme}
 						/>

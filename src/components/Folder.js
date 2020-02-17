@@ -159,11 +159,16 @@ export function DeleteFolderModal(props) {
 
 	const _handleShow = () => setShow(true)
 
+	const _deleteFolder = (folder) => {
+		deleteFolder(folder)
+		_handleClose()
+	}
+
 	return (
 		<div>
 			<Button
 				className="shadow-none"
-				style={colorScheme.navbarBtns}
+				style={colorScheme.trashBtns}
 				size="sm"
 				onClick={_handleShow}
 			><IoMdTrash/></Button>
@@ -182,7 +187,7 @@ export function DeleteFolderModal(props) {
 						style={colorScheme.navbarBtns}
 						size="sm"
 						className="shadow-none"
-						onClick={() => deleteFolder(folder)}
+						onClick={() => _deleteFolder(folder)}
 					>Yes, delete it!</Button>
 				</Modal.Footer>
 			</Modal>
