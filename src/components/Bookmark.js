@@ -168,6 +168,14 @@ export function MoveBookmarkModal(props) {
 		_handleClose()
 	}
 
+	const _dropdownValueName = (name) => {
+		if (name.length > 12 ) {
+			return name.substring(0, 12) + ".."
+		}
+		
+		return name
+	}
+
 	return (
 		<div>
 			<Button
@@ -182,21 +190,24 @@ export function MoveBookmarkModal(props) {
 				<Modal.Body>
 					<Container>
 						<Row>
-							<Col xs={4}>
-								<span>Move to:</span>
+							<Col xs={6}>
+								<span><b>Move to folder:</b></span>
 							</Col>
-							<Col xs={8}>
+							<Col xs={6}>
 								<DropdownButton
 									size="sm"
 									id="dropdown-basic-button"
-									title={destFolder !== null ? destFolder.name : "Root folder"}
+									title={destFolder !== null ? _dropdownValueName(destFolder.name) : "Root folder"}
 									onSelect={(eventKey) => _setDestFolder(eventKey)}
+									variant="econdary"
 								>
 									{folders.map(
 										(folder, key) => (
 											<Dropdown.Item
 												key={key}
-												eventKey={folder.folderId}>{folder.name}
+												eventKey={folder.folderId}
+												className="limited-text">
+													{folder.name}
 											</Dropdown.Item>
 										)
 									)}

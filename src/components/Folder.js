@@ -179,7 +179,7 @@ export function DeleteFolderModal(props) {
 				</Modal.Header>
 				<Modal.Body>
 					<div>
-						<span>Delete folder: <b>{folder.name}</b></span>
+						<span>Delete folder: <b className="limited-text">{folder.name}</b></span>
 					</div>
 				</Modal.Body>
 				<Modal.Footer>
