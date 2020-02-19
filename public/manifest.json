@@ -8,7 +8,7 @@
     "default_title": "Bookmarks"
   },
   "permissions": [
-    "storage", "tabs"
+    "storage", "tabs", "bookmarks"
   ],
   "icons": {
     "64": "bookmark.png"

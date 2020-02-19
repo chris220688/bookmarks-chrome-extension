@@ -25,11 +25,11 @@ class App extends Component {
 	}
 
 	componentDidMount() {
-		let local_state = localStorage.get('state')
-		if (local_state !== null && local_state.length !== {}) {
-			this.setState(local_state)
+		let localState = localStorage.get('state')
+		if (localState !== null && localState.length !== {}) {
+			this.setState(localState)
 
-			if (local_state.colorScheme.darkMode) {
+			if (localState.colorScheme.darkMode) {
 				document.body.style.background = backgroundColor
 			}
 		}
@@ -104,18 +104,18 @@ class App extends Component {
 			return
 		}
 
-		let filtered_folders = this.state.folders.filter(fl => {
+		let filteredFolders = this.state.folders.filter(fl => {
 			return fl.folderId === this.state.currentFolderId
 		})
 
-		let parent_folder = this.state.folders.filter(fl => {
-			return fl.folderId === filtered_folders[0].parentFolderId
+		let parentFolder = this.state.folders.filter(fl => {
+			return fl.folderId === filteredFolders[0].parentFolderId
 		})
 
-		if (parent_folder.length > 0) {
+		if (parentFolder.length > 0) {
 			this.setState(state => ({
-				currentFolderId: parent_folder[0].folderId,
-				currentFolderName: parent_folder[0].name,
+				currentFolderId: parentFolder[0].folderId,
+				currentFolderName: parentFolder[0].name,
 			}))
 		} else {
 			this.setState(state => ({
@@ -149,9 +149,9 @@ class App extends Component {
 		let fileReader = new FileReader()
 		
 		const handleFileRead = (e) => {
-			let imported_bookmarks = JSON.parse(fileReader.result)
-			let bookmarks = this.state.bookmarks.concat(imported_bookmarks.bookmarks)
-			let folders = this.state.folders.concat(imported_bookmarks.folders)
+			let importedBookmarks = JSON.parse(fileReader.result)
+			let bookmarks = this.state.bookmarks.concat(importedBookmarks.bookmarks)
+			let folders = this.state.folders.concat(importedBookmarks.folders)
 
 			this.setState(state => ({
 				folders: folders,
@@ -172,18 +172,19 @@ class App extends Component {
 			], {type: 'text/json'}
 		)
 		let jsonURL = window.URL.createObjectURL(data)
-	    let a = document.createElement("a");
-	    document.body.appendChild(a);
-	    a.style = "display: none";
-        a.href = jsonURL;
-        a.download = 'bookmarks.json';
-        a.click();
-        window.URL.revokeObjectURL(jsonURL);
+		let a = document.createElement("a");
+		document.body.appendChild(a);
+		a.style = "display: none";
+		a.href = jsonURL;
+		a.download = 'bookmarks.json';
+		a.click();
+		window.URL.revokeObjectURL(jsonURL);
 	}
 
 	render() {
 		return (
 			<div className="App">
+				{/*<Button onClick={() => console.log(JSON.stringify(this.state))}>State</Button>*/}
 				<Navbar className="mb-2" style={this.state.colorScheme.navbar} expand="sm">
 					<Nav className="mr-3">
 						{this.state.currentFolderId || this.state.settings ?
@@ -237,10 +238,15 @@ class App extends Component {
 				{this.state.settings ?
 					<section>
 						<Settings
+							toggleSettings={this.toggleSettings}
 							toggleColorScheme={this.toggleColorScheme}
 							colorScheme={this.state.colorScheme}
 							importBookmarks={this.importBookmarks}
 							exportBookmarks={this.exportBookmarks}
+							folders={this.state.folders}
+							setFolders={this.setFolders}
+							bookmarks={this.state.bookmarks}
+							setBookmarks={this.setBookmarks}
 						/>
 					</section> :
 					<section>

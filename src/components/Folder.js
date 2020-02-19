@@ -1,6 +1,15 @@
 import React, { useState } from 'react'
 
-import { Button, Table, Modal, FormControl, InputGroup } from 'react-bootstrap'
+import {
+	Button,
+	Col,
+	Container,
+	FormControl,
+	InputGroup,
+	Modal,
+	Row,
+	Table
+} from 'react-bootstrap'
 import { IoMdTrash } from 'react-icons/io'
 import { FaFolderPlus } from 'react-icons/fa'
 
@@ -18,20 +27,20 @@ export function Folders(props) {
 
 	const _deleteFolder = (folder) => {
 
-		const _delete_children = (childrenFolders, childrenBookmarks) => {
-			let fls_to_delete = folders.filter(
+		const _deleteChildren = (childrenFolders, childrenBookmarks) => {
+			let flsToDelete = folders.filter(
 				fl => childrenFolders.includes(fl.folderId)
 			)
 
-			let bks_to_delete = bookmarks.filter(
+			let bksToDelete = bookmarks.filter(
 				bk => childrenBookmarks.includes(bk.bookmarkId)
 			)
 
-			bks_to_delete.forEach(bk => _deleteBookmark(bk))
-			fls_to_delete.forEach(fl => _deleteFolder(fl))
+			bksToDelete.forEach(bk => _deleteBookmark(bk))
+			flsToDelete.forEach(fl => _deleteFolder(fl))
 		}
 
-		_delete_children(folder.childrenFolders, folder.childrenBookmarks)
+		_deleteChildren(folder.childrenFolders, folder.childrenBookmarks)
 
 		folders = folders.filter(fl => fl !== folder)
 
@@ -87,7 +96,7 @@ export function AddFolderModal(props) {
 			return
 		}
 
-		let new_folder = {
+		let newFolder = {
 			name: textInput.current.value,
 			folderId: uuidv4(),
 			parentFolderId: currentFolderId,
@@ -95,17 +104,17 @@ export function AddFolderModal(props) {
 			childrenBookmarks: [],
 		}
 
-		folders.push(new_folder)
+		folders.push(newFolder)
 
 		textInput.current.value = ''
 
 		// Add folder to the childrenFolders of the current folder
 		if (currentFolderId !== null) {
-			let parent_folder = folders.filter(fl => {
+			let parentFolder = folders.filter(fl => {
 				return fl.folderId === currentFolderId
 			})[0]
 
-			parent_folder.childrenFolders.push(new_folder.folderId)
+			parentFolder.childrenFolders.push(newFolder.folderId)
 		}
 
 		setFolders(folders)
@@ -178,9 +187,16 @@ export function DeleteFolderModal(props) {
 					<Modal.Title>Are you sure?</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<div>
-						<span>Delete folder: <b className="limited-text">{folder.name}</b></span>
-					</div>
+					<Container>
+						<Row>
+							<Col xs={6}>
+								<span><b>Delete folder:</b></span>
+							</Col>
+							<Col xs={6}>
+								<span><b className="limited-text">{folder.name}</b></span>
+							</Col>
+						</Row>
+					</Container>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button

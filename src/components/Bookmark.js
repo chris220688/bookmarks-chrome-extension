@@ -27,7 +27,7 @@ export function AddBookmarkBtn(props) {
 
 	const _addBookmark = (tabs) => {
 
-		let new_bookmark = {
+		let newBookmark = {
 			name: tabs.title,
 			bookmarkId: uuidv4(),
 			parentFolderId: currentFolderId,
@@ -41,15 +41,15 @@ export function AddBookmarkBtn(props) {
 			return
 		}
 
-		bookmarks.push(new_bookmark)
+		bookmarks.push(newBookmark)
 
 		// Add bookmark to the childrenBookmarks of the current folder
 		if (currentFolderId !== null) {
-			let parent_folder = folders.filter(fl => {
+			let parentFolder = folders.filter(fl => {
 				return fl.folderId === currentFolderId
 			})[0]
 
-			parent_folder.childrenBookmarks.push(new_bookmark.bookmarkId)
+			parentFolder.childrenBookmarks.push(newBookmark.bookmarkId)
 		}
 
 		setBookmarks(bookmarks)
@@ -86,7 +86,7 @@ export function Bookmarks(props) {
 		setBookmarks(bookmarks)
 	}
 
-	const _rename_bookmark = (bookmark, e) => {
+	const _renameBookmark = (bookmark, e) => {
 		bookmark.name = e.target.value
 		setBookmarks(bookmarks)
 	}
@@ -104,7 +104,7 @@ export function Bookmarks(props) {
 								<Form.Control
 									plaintext style={colorScheme.bookmarkTitle}
 									value={bookmark.name}
-									onChange={(e) => _rename_bookmark(bookmark, e)}
+									onChange={(e) => _renameBookmark(bookmark, e)}
 								/>
 							</td>
 							<td className="text-left align-middle" style={colorScheme.bookmarksTableTds}>
