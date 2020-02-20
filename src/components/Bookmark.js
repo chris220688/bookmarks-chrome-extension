@@ -98,7 +98,7 @@ export function Bookmarks(props) {
 					(bookmark, key) => (
 						<tr key={key}>
 							<td className="align-middle" style={colorScheme.bookmarksTableTds}>
-								{key+1}
+								<img src={"chrome://favicon/" + bookmark.url}/>
 							</td>
 							<td className="text-left align-middle" style={colorScheme.bookmarksTableTds}>
 								<Form.Control
