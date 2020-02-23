@@ -11,13 +11,8 @@ import { CustomToast } from './CustomToast.js'
 import { Folders, AddFolderModal } from './Folder.js'
 import { Settings } from './Settings.js'
 import { lightTheme, darkTheme, backgroundColor } from '../constants/Themes.js'
-import { importedBookmarksSchema } from '../constants/JsonSchema.js'
+import { validate } from './validateSchema'
 
-
-
-const Ajv = require('ajv')
-var ajv = new Ajv()
-var validateJson = ajv.compile(importedBookmarksSchema)
 
 class App extends Component {
 
@@ -166,8 +161,8 @@ class App extends Component {
 			let bookmarks = []
 			let folders = []
 
-			let valid = validateJson(importedBookmarks);
-			if (!valid) {
+			let validJSON = validate(importedBookmarks);
+			if (!validJSON) {
 				this.setError("Invalid JSON file!")
 				return
 			}
