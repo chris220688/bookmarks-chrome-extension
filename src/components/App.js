@@ -11,7 +11,7 @@ import { CustomToast } from './CustomToast.js'
 import { Folders, AddFolderModal } from './Folder.js'
 import { Settings } from './Settings.js'
 import { lightTheme, darkTheme, backgroundColor } from '../constants/Themes.js'
-import { validate } from './validateSchema'
+import validate from '../schema/validateSchema.js'
 
 
 class App extends Component {
