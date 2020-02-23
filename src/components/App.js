@@ -2,16 +2,22 @@
 import React, { Component } from 'react'
 import '../styles/App.css'
 
-import { Bookmarks, AddBookmarkBtn} from './Bookmark.js'
-import { CustomToast } from './CustomToast.js'
-import { Folders, AddFolderModal } from './Folder.js'
-import { lightTheme, darkTheme, backgroundColor } from '../constants/Themes.js'
-import { Settings } from './Settings.js'
-
-import { Button, Nav, Navbar } from 'react-bootstrap'
+import { Alert, Button, Nav, Navbar } from 'react-bootstrap'
 import { IoIosArrowBack, IoIosSettings } from 'react-icons/io'
 import localStorage from 'local-storage'
 
+import { Bookmarks, AddBookmarkBtn} from './Bookmark.js'
+import { CustomToast } from './CustomToast.js'
+import { Folders, AddFolderModal } from './Folder.js'
+import { Settings } from './Settings.js'
+import { lightTheme, darkTheme, backgroundColor } from '../constants/Themes.js'
+import { importedBookmarksSchema } from '../constants/JsonSchema.js'
+
+
+
+const Ajv = require('ajv')
+var ajv = new Ajv()
+var validateJson = ajv.compile(importedBookmarksSchema)
 
 class App extends Component {
 
@@ -21,7 +27,8 @@ class App extends Component {
 		folders: [],
 		bookmarks: [],
 		settings: false,
-		colorScheme: lightTheme
+		colorScheme: lightTheme,
+		error: null,
 	}
 
 	componentDidMount() {
@@ -46,6 +53,12 @@ class App extends Component {
 		) {
 			localStorage.set('state', this.state)
 		}
+	}
+
+	setError = (error) => {
+		this.setState(state => ({
+			error: error
+		}))
 	}
 
 	setCurrentFolder = (folder) => {
@@ -150,8 +163,17 @@ class App extends Component {
 		
 		const handleFileRead = (e) => {
 			let importedBookmarks = JSON.parse(fileReader.result)
-			let bookmarks = this.state.bookmarks.concat(importedBookmarks.bookmarks)
-			let folders = this.state.folders.concat(importedBookmarks.folders)
+			let bookmarks = []
+			let folders = []
+
+			let valid = validateJson(importedBookmarks);
+			if (!valid) {
+				this.setError("Invalid JSON file!")
+				return
+			}
+
+			bookmarks = this.state.bookmarks.concat(importedBookmarks.bookmarks)
+			folders = this.state.folders.concat(importedBookmarks.folders)
 
 			this.setState(state => ({
 				folders: folders,
@@ -184,7 +206,15 @@ class App extends Component {
 	render() {
 		return (
 			<div className="App">
-				{/*<Button onClick={() => console.log(JSON.stringify(this.state))}>State</Button>*/}
+				{this.state.error ?
+					<Alert
+						variant="danger"
+						onClose={() => this.setError(null)}
+						dismissible
+					>
+						{this.state.error}
+					</Alert> : <span></span>
+				}
 				<Navbar className="mb-2" style={this.state.colorScheme.navbar} expand="sm">
 					<Nav className="mr-3">
 						{this.state.currentFolderId || this.state.settings ?

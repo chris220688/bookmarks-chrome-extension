@@ -2,15 +2,7 @@
 import React, { useState } from 'react'
 
 import {
-	Button,
-	Col,
-	Container,
-	Dropdown,
-	DropdownButton,
-	Form,
-	Modal,
-	Row,
-	Table
+	Button, Col, Container, Dropdown, DropdownButton, Form, Modal, Row, Table
 } from 'react-bootstrap'
 import { IoMdBookmark, IoMdTrash, IoMdMove } from 'react-icons/io'
 
@@ -98,7 +90,7 @@ export function Bookmarks(props) {
 					(bookmark, key) => (
 						<tr key={key}>
 							<td className="align-middle" style={colorScheme.bookmarksTableTds}>
-								<img src={"chrome://favicon/" + bookmark.url}/>
+								<img alt="" src={"chrome://favicon/" + bookmark.url}/>
 							</td>
 							<td className="text-left align-middle" style={colorScheme.bookmarksTableTds}>
 								<Form.Control
@@ -149,7 +141,6 @@ export function MoveBookmarkModal(props) {
 
 	const [show, setShow] = useState(false)
 	const [destFolder, setDestFolder] = useState(null)
-	const textInput = React.createRef()
 
 	const _handleClose = () => setShow(false)
 

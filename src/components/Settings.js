@@ -1,7 +1,7 @@
 /*global chrome*/
 import React from 'react'
 
-import { Alert, Button, Table } from 'react-bootstrap'
+import { Button, Table } from 'react-bootstrap'
 
 
 const uuidv4 = require("uuid/v4")
@@ -94,7 +94,7 @@ export function Settings(props) {
 			currentFolder = null // Root folder in the extension
 		}
 
-		chrome.bookmarks.getChildren(chromeParentId, function(itemTree){
+		chrome.bookmarks.getChildren(chromeParentId, function(itemTree) {
 			itemTree.forEach(function(item){
 				if (typeof item.url !== 'undefined') {
 					_handleBookmark(item, currentFolder)

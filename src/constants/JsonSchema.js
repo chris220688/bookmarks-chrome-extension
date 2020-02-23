@@ -1,0 +1,46 @@
+export const importedBookmarksSchema = {
+	"properties": {
+		"bookmarks": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": { "type": "string" },
+					"bookmarkId": { "type": "string" },
+					"parentFolderId": { "type": ["string", "null"]},
+					"url": { "type": "string" }
+				},
+				"required": [
+					"name", "bookmarkId", "parentFolderId", "url"
+				]
+			}
+		},
+		"folders": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": { "type": "string" },
+					"folderId": { "type": "string" },
+					"parentFolderId": { "type": ["string", "null"]},
+					"childrenFolders": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"childrenBookmarks": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"name", "folderId", "parentFolderId", "childrenFolders", "childrenBookmarks"
+				]
+			}
+		}
+	},
+	"required": ["folders", "bookmarks"]
+}

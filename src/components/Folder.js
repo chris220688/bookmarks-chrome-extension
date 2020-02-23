@@ -1,14 +1,7 @@
 import React, { useState } from 'react'
 
 import {
-	Button,
-	Col,
-	Container,
-	FormControl,
-	InputGroup,
-	Modal,
-	Row,
-	Table
+	Button, Col, Container, FormControl, InputGroup, Modal, Row, Table
 } from 'react-bootstrap'
 import { IoMdTrash } from 'react-icons/io'
 import { FaFolderPlus } from 'react-icons/fa'
@@ -162,7 +155,6 @@ export function DeleteFolderModal(props) {
 	let colorScheme = props.colorScheme
 
 	const [show, setShow] = useState(false)
-	const textInput = React.createRef()
 
 	const _handleClose = () => setShow(false)
 
