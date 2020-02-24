@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "Bookmarks",
+  "name": "Beautiful Bookmarks",
   "description": "An extension for managing bookmarks.",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "browser_action": {
     "default_popup": "index.html",
     "default_title": "Bookmarks"
