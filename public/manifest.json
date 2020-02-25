@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Kolitiri Bookmarks",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "An extension for managing bookmarks.",
   "browser_action": {
     "default_popup": "index.html",
