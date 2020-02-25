@@ -59,6 +59,10 @@ html {
   white-space: nowrap;
 }
 
+.folder-btn {
+  /* Oops, I'll fix you some other time.. */
+  box-shadow: none !important;
+}
 
 /* The switch - the box around the slider */
 .switch {

@@ -88,6 +88,31 @@ class App extends Component {
 	}
 
 	moveBookmark = (bookmark, folder) => {
+		let folders = this.state.folders
+
+		// Remove bookmark id from the children of the current folder
+		let currentFolder = folders.filter(
+			fl => fl.folderId === bookmark.parentFolderId
+		)[0]
+
+		currentFolder.childrenBookmarks = currentFolder.childrenBookmarks.filter(
+			bk => bk !== bookmark.bookmarkId
+		)
+
+		if (folder !== null) {
+			// Append bookmark id to the children of the new folder
+			let newFolder = folders.filter(
+				fl => fl.folderId === folder.folderId
+			)[0]
+
+			newFolder.childrenBookmarks.push(bookmark.bookmarkId)
+		}
+
+		this.setState(state => ({
+			folders: folders
+		}))
+
+		// Update bookmark's new parent folder
 		if (folder !== null) {
 			bookmark.parentFolderId = folder.folderId
 		} else {
@@ -287,6 +312,7 @@ class App extends Component {
 						/>
 						<Bookmarks
 							folders={this.state.folders}
+							setFolders={this.setFolders}
 							bookmarks={this.state.bookmarks}
 							setBookmarks={this.setBookmarks}
 							moveBookmark={this.moveBookmark}

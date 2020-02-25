@@ -19,6 +19,15 @@ export function Folders(props) {
 	let colorScheme = props.colorScheme
 
 	const _deleteFolder = (folder) => {
+		if (folder.parentFolderId !== null) {
+			let parentFolder = folders.filter(
+				fl => fl !== folder.parentFolderId
+			)[0]
+
+			parentFolder.childrenFolders = parentFolder.childrenFolders.filter(
+				fl => fl !== folder.folderId
+			)
+		}
 
 		const _deleteChildren = (childrenFolders, childrenBookmarks) => {
 			let flsToDelete = folders.filter(
@@ -55,6 +64,7 @@ export function Folders(props) {
 								<Button
 									size="sm"
 									style={colorScheme.folderBtns}
+									className="folder-btn"
 									onClick={() => setCurrentFolder(folder)}
 								><span className="limited-text-btn">{folder.name}</span>
 								</Button>

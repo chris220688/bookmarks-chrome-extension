@@ -67,6 +67,7 @@ export function AddBookmarkBtn(props) {
 
 export function Bookmarks(props) {
 	let folders = props.folders
+	let setFolders = props.setFolders
 	let bookmarks = props.bookmarks
 	let setBookmarks = props.setBookmarks
 	let moveBookmark = props.moveBookmark
@@ -74,8 +75,22 @@ export function Bookmarks(props) {
 	let colorScheme = props.colorScheme
 
 	const _deleteBookmark = (bookmark) => {
+		// Clear bookmark from the children of the current folder
+		if (bookmark.parentFolderId !== null) {
+			let currentFolder = folders.filter(
+				fl => fl.folderId === bookmark.parentFolderId
+			)[0]
+
+			currentFolder.childrenBookmarks = currentFolder.childrenBookmarks.filter(
+				bk => bk !== bookmark.bookmarkId
+			)
+		}
+
+		// Clear the bookmark from the bookmarks list
 		bookmarks = bookmarks.filter(bk => bk !== bookmark)
+
 		setBookmarks(bookmarks)
+		setFolders(folders)
 	}
 
 	const _renameBookmark = (bookmark, e) => {

@@ -1,16 +1,17 @@
 {
   "manifest_version": 2,
-  "name": "Beautiful Bookmarks",
-  "description": "An extension for managing bookmarks.",
+  "name": "Kolitiri Bookmarks",
   "version": "1.0.2",
+  "description": "An extension for managing bookmarks.",
   "browser_action": {
     "default_popup": "index.html",
-    "default_title": "Bookmarks"
+    "default_title": "Kolitiri Bookmarks"
   },
   "permissions": [
     "storage", "tabs", "bookmarks", "chrome://favicon/"
   ],
   "icons": {
-    "64": "bookmark.png"
+    "64": "bookmark.png",
+    "128": "bookmark-128.png"
   }
 }
