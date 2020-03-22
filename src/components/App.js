@@ -90,14 +90,16 @@ class App extends Component {
 	moveBookmark = (bookmark, folder) => {
 		let folders = this.state.folders
 
-		// Remove bookmark id from the children of the current folder
-		let currentFolder = folders.filter(
+		let currentFolderList = folders.filter(
 			fl => fl.folderId === bookmark.parentFolderId
-		)[0]
-
-		currentFolder.childrenBookmarks = currentFolder.childrenBookmarks.filter(
-			bk => bk !== bookmark.bookmarkId
 		)
+
+		if (currentFolderList.length > 0) {
+			// Remove bookmark id from the children of the current folder
+			currentFolderList[0].childrenBookmarks = currentFolderList[0].childrenBookmarks.filter(
+				bk => bk !== bookmark.bookmarkId
+			)
+		}
 
 		if (folder !== null) {
 			// Append bookmark id to the children of the new folder

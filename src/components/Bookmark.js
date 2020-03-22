@@ -205,7 +205,7 @@ export function MoveBookmarkModal(props) {
 									id="dropdown-basic-button"
 									title={destFolder !== null ? _dropdownValueName(destFolder.name) : "Root folder"}
 									onSelect={(eventKey) => _setDestFolder(eventKey)}
-									variant="econdary"
+									variant="secondary"
 								>
 									{folders.map(
 										(folder, key) => (
