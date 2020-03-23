@@ -24,6 +24,12 @@ export const lightTheme = {
 		border: "none",
 		color: "black"
 	},
+	reorderBtns: {
+		backgroundColor: "transparent",
+		border: "none",
+		color: "black",
+		cursor: "grab"
+	},
 	bookmarksTable: {
 		backgroundColor: "#f1f1f6",
 		color: "black"
@@ -67,6 +73,12 @@ export const darkTheme = {
 		backgroundColor: "transparent",
 		border: "none",
 		color: "#e9ad0c"
+	},
+	reorderBtns: {
+		backgroundColor: "transparent",
+		border: "none",
+		color: "#e9ad0c",
+		cursor: "grab"
 	},
 	bookmarksTable: {
 		backgroundColor: "#252526",

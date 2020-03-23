@@ -1,10 +1,13 @@
 /*global chrome*/
 import React, { useState } from 'react'
 
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
 import {
 	Button, Col, Container, Dropdown, DropdownButton, Form, Modal, Row, Table
 } from 'react-bootstrap'
 import { IoMdBookmark, IoMdTrash, IoMdMove } from 'react-icons/io'
+import { GoFileSymlinkFile } from 'react-icons/go'
 
 
 const uuidv4 = require('uuid/v4')
@@ -72,6 +75,7 @@ export function Bookmarks(props) {
 	let setBookmarks = props.setBookmarks
 	let moveBookmark = props.moveBookmark
 	let currentFolderId = props.currentFolderId
+	let childrenBookmarks = props.childrenBookmarks
 	let colorScheme = props.colorScheme
 
 	const _deleteBookmark = (bookmark) => {
@@ -98,53 +102,104 @@ export function Bookmarks(props) {
 		setBookmarks(bookmarks)
 	}
 
+	const _onDragEnd = (result) => {
+		if (!result.destination) {
+			return
+		}
+
+		let currentFolderList = folders.filter(fl => fl.folderId === currentFolderId)
+
+		if (currentFolderList.length > 0) {
+			let currentFolder = currentFolderList[0]
+			currentFolder.childrenBookmarks.splice(
+				result.source.index, 1
+			)
+			currentFolder.childrenBookmarks.splice(
+				result.destination.index, 0, result.draggableId
+			)
+			setFolders(folders)
+		} else {
+			let rootBookmarks = bookmarks.filter(bk => bk.parentFolderId === null)
+			let replaceableBoookmark = rootBookmarks[result.destination.index]
+			let replaceableBoookmarkIndex = bookmarks.indexOf(replaceableBoookmark)
+			let bookmarkToMove = rootBookmarks[result.source.index]
+			let bookmarkToMoveIndex = bookmarks.indexOf(bookmarkToMove)
+			// Remove bookmark from its original position
+			bookmarks.splice(
+				bookmarkToMoveIndex, 1
+			)
+			// Place bookmark on the new position
+			bookmarks.splice(
+				replaceableBoookmarkIndex, 0, bookmarkToMove
+			)
+			setBookmarks(bookmarks)
+		}
+	}
+
 	return (
-		<Table striped bordered hover size="sm" style={colorScheme.bookmarksTable}>
-			<tbody>
-				{bookmarks.filter(bookmark => bookmark.parentFolderId === currentFolderId).map(
-					(bookmark, key) => (
-						<tr key={key}>
-							<td className="align-middle" style={colorScheme.bookmarksTableTds}>
-								<img alt="" src={"chrome://favicon/" + bookmark.url}/>
-							</td>
-							<td className="text-left align-middle" style={colorScheme.bookmarksTableTds}>
-								<Form.Control
-									plaintext style={colorScheme.bookmarkTitle}
-									value={bookmark.name}
-									onChange={(e) => _renameBookmark(bookmark, e)}
-								/>
-							</td>
-							<td className="text-left align-middle" style={colorScheme.bookmarksTableTds}>
-								<a
-									className="limited-text"
-									style={colorScheme.bookmarkLink}
-									href={bookmark.url}
-									target="_blank"
-									rel="noopener noreferrer">{bookmark.url}
-								</a>
-							</td>
-							<td className="align-middle" style={colorScheme.bookmarksTableTds}>
-								<MoveBookmarkModal
-									folders={folders}
-									bookmark={bookmark}
-									moveBookmark={moveBookmark}
-									colorScheme={colorScheme}
-								/>
-							</td>
-							<td className="align-middle" style={colorScheme.bookmarksTableTds}>
-								<Button
-									size="sm"
-									className="shadow-none"
-									style={colorScheme.trashBtns}
-									onClick={() => _deleteBookmark(bookmark)}
-								><IoMdTrash/>
-								</Button>
-							</td>
-						</tr>
-					)
+		<DragDropContext onDragEnd={_onDragEnd}>
+			<Droppable droppableId="droppable">
+				{(provided, snapshot) => (
+					<Table striped bordered hover size="sm" style={colorScheme.bookmarksTable} ref={provided.innerRef} id="bookmarks-table">
+						<tbody>
+							{childrenBookmarks.map((bookmark, index) => (
+								<Draggable key={bookmark.bookmarkId} draggableId={bookmark.bookmarkId} index={index}>
+									{(provided, snapshot) => (
+										<tr ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+											<td className="align-middle" style={colorScheme.bookmarksTableTds}>
+												<img alt="" src={"chrome://favicon/" + bookmark.url}/>
+											</td>
+											<td className="text-left align-middle" style={colorScheme.bookmarksTableTds}>
+												<Form.Control
+													plaintext style={colorScheme.bookmarkTitle}
+													value={bookmark.name}
+													onChange={(e) => _renameBookmark(bookmark, e)}
+												/>
+											</td>
+											<td className="text-left align-middle" style={colorScheme.bookmarksTableTds}>
+												<a
+													className="limited-text"
+													style={colorScheme.bookmarkLink}
+													href={bookmark.url}
+													target="_blank"
+													rel="noopener noreferrer">{bookmark.url}
+												</a>
+											</td>
+											<td className="align-middle" style={colorScheme.bookmarksTableTds}>
+												<MoveBookmarkModal
+													folders={folders}
+													bookmark={bookmark}
+													moveBookmark={moveBookmark}
+													colorScheme={colorScheme}
+												/>
+											</td>
+											<td className="align-middle" style={colorScheme.bookmarksTableTds}>
+												<Button
+													size="sm"
+													className="shadow-none"
+													style={colorScheme.trashBtns}
+													onClick={() => _deleteBookmark(bookmark)}
+												><IoMdTrash/>
+												</Button>
+											</td>
+											<td className="align-middle" style={colorScheme.bookmarksTableTds}>
+												<Button
+													size="sm"
+													className="shadow-none"
+													style={colorScheme.reorderBtns}
+												><IoMdMove/>
+												</Button>
+											</td>
+										</tr>
+									)}
+								</Draggable>
+							))}
+							{provided.placeholder}
+						</tbody>
+					</Table>
 				)}
-			</tbody>
-		</Table>
+			</Droppable>
+		</DragDropContext>
 	)
 }
 
@@ -189,7 +244,7 @@ export function MoveBookmarkModal(props) {
 				className="shadow-none"
 				style={colorScheme.trashBtns}
 				onClick={_handleShow}
-			><IoMdMove/>
+			><GoFileSymlinkFile/>
 			</Button>
 
 			<Modal size="sm" show={show} onHide={_handleClose} animation={false}>

@@ -75,10 +75,44 @@ class App extends Component {
 		return <span></span>
 	}
 
+	getChildrenFolders = () => {
+		let childrenFolders = []
+		if (this.state.currentFolderId !== null) {
+			let currentFolder = this.state.folders.filter(
+				fl => fl.folderId === this.state.currentFolderId
+			)[0]
+
+			currentFolder.childrenFolders.forEach(folderId => childrenFolders.push(
+				this.state.folders.filter(fl => fl.folderId === folderId)[0]
+			))
+		} else {
+			childrenFolders = this.state.folders.filter(fl => fl.parentFolderId === this.state.currentFolderId)
+		}
+
+		return childrenFolders
+	}
+
 	setFolders = (folders) => {
 		this.setState(state => ({
 			folders: folders
 		}))
+	}
+
+	getChildrenBookmarks = () => {
+		let childrenBookmarks = []
+		if (this.state.currentFolderId !== null) {
+			let currentFolder = this.state.folders.filter(
+				fl => fl.folderId === this.state.currentFolderId
+			)[0]
+
+			currentFolder.childrenBookmarks.forEach(bookmarkId => childrenBookmarks.push(
+				this.state.bookmarks.filter(bk => bk.bookmarkId === bookmarkId)[0]
+			))
+		} else {
+			childrenBookmarks = this.state.bookmarks.filter(bk => bk.parentFolderId === this.state.currentFolderId)
+		}
+		console.log(childrenBookmarks)
+		return childrenBookmarks
 	}
 
 	setBookmarks = (bookmarks) => {
@@ -309,6 +343,7 @@ class App extends Component {
 							bookmarks={this.state.bookmarks}
 							setBookmarks={this.setBookmarks}
 							currentFolderId={this.state.currentFolderId}
+							childrenFolders={this.getChildrenFolders()}
 							setCurrentFolder={this.setCurrentFolder}
 							colorScheme={this.state.colorScheme}
 						/>
@@ -319,6 +354,7 @@ class App extends Component {
 							setBookmarks={this.setBookmarks}
 							moveBookmark={this.moveBookmark}
 							currentFolderId={this.state.currentFolderId}
+							childrenBookmarks={this.getChildrenBookmarks()}
 							colorScheme={this.state.colorScheme}
 						/>
 					</section>

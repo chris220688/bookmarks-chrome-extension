@@ -44,15 +44,16 @@ html {
 }
 
 .limited-text {
-  max-width : 200px;
+  max-width : 150px;
   overflow:hidden;
   display:inline-block;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 12px;
 }
 
 .limited-text-btn {
-  width : 350px;
+  width : 270px;
   overflow:hidden;
   display:inline-block;
   text-overflow: ellipsis;
@@ -127,4 +128,14 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+/* Dropdown buttons */
+.dropdown-menu {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+#bookmarks-table input {
+  font-size: 12px;
 }

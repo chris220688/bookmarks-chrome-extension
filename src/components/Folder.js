@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
 import {
 	Button, Col, Container, FormControl, InputGroup, Modal, Row, Table
 } from 'react-bootstrap'
-import { IoMdTrash } from 'react-icons/io'
+import { IoMdMove, IoMdTrash} from 'react-icons/io'
 import { FaFolderPlus } from 'react-icons/fa'
+import { GoFileSymlinkDirectory } from 'react-icons/go'
 
 
 const uuidv4 = require("uuid/v4")
@@ -15,13 +18,14 @@ export function Folders(props) {
 	let bookmarks = props.bookmarks
 	let setBookmarks = props.setBookmarks
 	let currentFolderId = props.currentFolderId
+	let childrenFolders = props.childrenFolders
 	let setCurrentFolder = props.setCurrentFolder
 	let colorScheme = props.colorScheme
 
 	const _deleteFolder = (folder) => {
 		if (folder.parentFolderId !== null) {
 			let parentFolder = folders.filter(
-				fl => fl !== folder.parentFolderId
+				fl => fl.folderId === folder.parentFolderId
 			)[0]
 
 			parentFolder.childrenFolders = parentFolder.childrenFolders.filter(
@@ -54,29 +58,94 @@ export function Folders(props) {
 		bookmarks = bookmarks.filter(bk => bk !== bookmark)
 	}
 
+	const _onDragEnd = (result) => {
+		if (!result.destination) {
+			return
+		}
+
+		let currentFolderList = folders.filter(fl => fl.folderId === currentFolderId)
+
+		if (currentFolderList.length > 0) {
+			let currentFolder = currentFolderList[0]
+			currentFolder.childrenFolders.splice(
+				result.source.index, 1
+			)
+			currentFolder.childrenFolders.splice(
+				result.destination.index, 0, result.draggableId
+			)
+		} else {
+			let rootFolders = folders.filter(fl => fl.parentFolderId === null)
+			let replaceableFolder = rootFolders[result.destination.index]
+			let replaceableFolderIndex = folders.indexOf(replaceableFolder)
+			let folderToMove = rootFolders[result.source.index]
+			let folderToMoveIndex = folders.indexOf(folderToMove)
+			// Remove folder from its original position
+			folders.splice(
+				folderToMoveIndex, 1
+			)
+			// Place folder on the new position
+			folders.splice(
+				replaceableFolderIndex, 0, folderToMove
+			)
+		}
+		setFolders(folders)
+	}
+
 	return (
-		<Table borderless size="sm">
-			<tbody>
-				{folders.filter(folder => folder.parentFolderId === currentFolderId).map(
-					(folder, key) => (
-						<tr key={key}>
-							<td className="align-middle">
-								<Button
-									size="sm"
-									style={colorScheme.folderBtns}
-									className="folder-btn"
-									onClick={() => setCurrentFolder(folder)}
-								><span className="limited-text-btn">{folder.name}</span>
-								</Button>
-							</td>
-							<td className="align-middle">
-								<DeleteFolderModal folder={folder} deleteFolder={_deleteFolder} colorScheme={colorScheme}/>
-							</td>
-						</tr>
-					)
+		<DragDropContext onDragEnd={_onDragEnd}>
+			<Droppable droppableId="droppable">
+				{(provided, snapshot) => (
+					<Table borderless size="sm" ref={provided.innerRef}>
+						<tbody>
+							{childrenFolders.map((folder, index) => (
+								<Draggable key={folder.folderId} draggableId={folder.folderId} index={index}>
+									{(provided, snapshot) => (
+										<tr ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+											<td className="align-middle">
+												<Button
+													size="sm"
+													style={colorScheme.folderBtns}
+													className="folder-btn"
+													onClick={() => setCurrentFolder(folder)}
+												>
+													<span className="limited-text-btn">{folder.name}</span>
+												</Button>
+											</td>
+											<td className="align-middle">
+												<Button
+													size="sm"
+													style={colorScheme.trashBtns}
+													className="shadow-none"
+												>
+													<GoFileSymlinkDirectory/>
+												</Button>
+											</td>
+											<td className="align-middle">
+												<DeleteFolderModal
+													folder={folder}
+													deleteFolder={_deleteFolder}
+													colorScheme={colorScheme}
+												/>
+											</td>
+											<td className="align-middle">
+												<Button
+													size="sm"
+													style={colorScheme.reorderBtns}
+													className="shadow-none"
+												>
+														<IoMdMove/>
+												</Button>
+											</td>
+										</tr>
+									)}
+								</Draggable>
+							))}
+							{provided.placeholder}
+						</tbody>
+					</Table>
 				)}
-			</tbody>
-		</Table>
+			</Droppable>
+		</DragDropContext>
 	)
 }
 
