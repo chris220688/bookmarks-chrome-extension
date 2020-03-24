@@ -98,6 +98,33 @@ class App extends Component {
 		}))
 	}
 
+	moveFolder = (folder, destFolder) => {
+		//alert("Moving " + folder.folderId + " to " + destFolder.folderId)
+		let folders = this.state.folders
+
+		folder = folders.filter(fl => fl.folderId === folder.folderId)[0]
+
+		if (folder.parentFolderId !== null) {
+			// Remove folder from children list of parent folder
+			let parentFolder = folders.filter(fl => fl.folderId === folder.parentFolderId)[0]
+			parentFolder.childrenFolders = parentFolder.childrenFolders.filter(folderId => folderId !== folder.folderId)
+		}
+
+		if (destFolder !== null) {
+			// Add folder to children list of the destination folder
+			destFolder = folders.filter(fl => fl.folderId === destFolder.folderId)[0]
+			destFolder.childrenFolders.push(folder.folderId)
+			// Change parent folder to the destination one
+			folder.parentFolderId = destFolder.folderId
+		} else {
+			folder.parentFolderId = null
+		}
+
+		this.setState(state => ({
+			folders: folders
+		}))
+	}
+
 	getChildrenBookmarks = () => {
 		let childrenBookmarks = []
 		if (this.state.currentFolderId !== null) {
@@ -342,6 +369,7 @@ class App extends Component {
 							setFolders={this.setFolders}
 							bookmarks={this.state.bookmarks}
 							setBookmarks={this.setBookmarks}
+							moveFolder={this.moveFolder}
 							currentFolderId={this.state.currentFolderId}
 							childrenFolders={this.getChildrenFolders()}
 							setCurrentFolder={this.setCurrentFolder}

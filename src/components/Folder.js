@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 import {
-	Button, Col, Container, FormControl, InputGroup, Modal, Row, Table
+	Button, Col, Container, Dropdown, DropdownButton, FormControl, InputGroup, Modal, Row, Table
 } from 'react-bootstrap'
 import { IoMdMove, IoMdTrash} from 'react-icons/io'
 import { FaFolderPlus } from 'react-icons/fa'
@@ -17,6 +17,7 @@ export function Folders(props) {
 	let setFolders = props.setFolders
 	let bookmarks = props.bookmarks
 	let setBookmarks = props.setBookmarks
+	let moveFolder = props.moveFolder
 	let currentFolderId = props.currentFolderId
 	let childrenFolders = props.childrenFolders
 	let setCurrentFolder = props.setCurrentFolder
@@ -111,14 +112,13 @@ export function Folders(props) {
 													<span className="limited-text-btn">{folder.name}</span>
 												</Button>
 											</td>
-											<td className="align-middle">
-												<Button
-													size="sm"
-													style={colorScheme.trashBtns}
-													className="shadow-none"
-												>
-													<GoFileSymlinkDirectory/>
-												</Button>
+											<td className="align-middle" style={colorScheme.bookmarksTableTds}>
+												<MoveFolderModal
+													folders={folders}
+													folder={folder}
+													moveFolder={moveFolder}
+													colorScheme={colorScheme}
+												/>
 											</td>
 											<td className="align-middle">
 												<DeleteFolderModal
@@ -276,6 +276,94 @@ export function DeleteFolderModal(props) {
 						className="shadow-none"
 						onClick={() => _deleteFolder(folder)}
 					>Yes, delete it!</Button>
+				</Modal.Footer>
+			</Modal>
+		</div>
+	)
+}
+
+
+export function MoveFolderModal(props) {
+	let folders = props.folders
+	let folder = props.folder
+	let moveFolder = props.moveFolder
+	let colorScheme = props.colorScheme
+
+	const [show, setShow] = useState(false)
+	const [destFolder, setDestFolder] = useState(null)
+
+	const _handleClose = () => setShow(false)
+
+	const _handleShow = () => setShow(true)
+
+	const _setDestFolder = (eventKey) => {
+		let folder = folders.filter(fl => {
+			return fl.folderId === eventKey
+		})[0]
+
+		setDestFolder(folder)
+	}
+
+	const _moveFolder = (destFolder) => {
+		moveFolder(folder, destFolder)
+		_handleClose()
+	}
+
+	const _dropdownValueName = (name) => {
+		if (name.length > 12 ) {
+			return name.substring(0, 12) + ".."
+		}
+
+		return name
+	}
+
+	return (
+		<div>
+			<Button
+				size="sm"
+				className="shadow-none"
+				style={colorScheme.trashBtns}
+				onClick={_handleShow}
+			><GoFileSymlinkDirectory/>
+			</Button>
+
+			<Modal size="sm" show={show} onHide={_handleClose} animation={false}>
+				<Modal.Body>
+					<Container>
+						<Row>
+							<Col xs={6}>
+								<span><b>Move to folder:</b></span>
+							</Col>
+							<Col xs={6}>
+								<DropdownButton
+									size="sm"
+									id="dropdown-basic-button"
+									title={destFolder !== null ? _dropdownValueName(destFolder.name) : "Root folder"}
+									onSelect={(eventKey) => _setDestFolder(eventKey)}
+									variant="secondary"
+								>
+									{folders.map(
+										(folder, key) => (
+											<Dropdown.Item
+												key={key}
+												eventKey={folder.folderId}
+												className="limited-text">
+													{folder.name}
+											</Dropdown.Item>
+										)
+									)}
+								</DropdownButton>
+							</Col>
+						</Row>
+					</Container>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button
+						style={colorScheme.navbarBtns}
+						size="sm"
+						className="shadow-none"
+						onClick={() => _moveFolder(destFolder)}
+					>Move!</Button>
 				</Modal.Footer>
 			</Modal>
 		</div>
