@@ -99,7 +99,6 @@ class App extends Component {
 	}
 
 	moveFolder = (folder, destFolder) => {
-		//alert("Moving " + folder.folderId + " to " + destFolder.folderId)
 		let folders = this.state.folders
 
 		folder = folders.filter(fl => fl.folderId === folder.folderId)[0]
@@ -138,7 +137,7 @@ class App extends Component {
 		} else {
 			childrenBookmarks = this.state.bookmarks.filter(bk => bk.parentFolderId === this.state.currentFolderId)
 		}
-		console.log(childrenBookmarks)
+
 		return childrenBookmarks
 	}
 
