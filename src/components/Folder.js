@@ -112,7 +112,7 @@ export function Folders(props) {
 													<span className="limited-text-btn">{folder.name}</span>
 												</Button>
 											</td>
-											<td className="align-middle" style={colorScheme.bookmarksTableTds}>
+											<td className="align-middle">
 												<MoveFolderModal
 													folders={folders}
 													folder={folder}
@@ -342,7 +342,7 @@ export function MoveFolderModal(props) {
 									onSelect={(eventKey) => _setDestFolder(eventKey)}
 									variant="secondary"
 								>
-									{folders.map(
+									{folders.filter(fl => fl.folderId !== folder.folderId).map(
 										(folder, key) => (
 											<Dropdown.Item
 												key={key}
